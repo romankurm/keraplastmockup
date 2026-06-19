@@ -1,16 +1,13 @@
     import { orders } from "./orders-data.js";
     import { setupTable } from "./table-helper.js";
+    import { getOrders } from "./data-helper.js"
 
-    const sortedOrders = orders.toSorted((a, b) => {
-        const priority = {
-            active: 1,
-            problematic: 2,
-            done: 3
-        };
+    let ordrs = await getOrders();
 
-        return priority[a.status] - priority[b.status];
-    })
-    .filter(order => order.status != "done");
+    const sortedOrders = ordrs
+        .filter(order => order.status != "done")
+        .filter(order => order.so_nr != null)
+        .filter(order => order.task != null);
 
     let table_body = document.getElementById("tableBody");
 

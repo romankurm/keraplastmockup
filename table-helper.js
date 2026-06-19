@@ -20,7 +20,7 @@ export function setupTable(table_body, orders, isMainTable) {
                 material: order.material,
                 so_nr: order.so_nr,
                 client_obect: c_o,
-                order_task: order.order_task,
+                order_task: order.task,
                 amount: order.amount,
             }
     

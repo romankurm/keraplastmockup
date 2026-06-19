@@ -14,7 +14,7 @@
     },
 */
 
-class Order {
+export class Order {
     constructor(t_nr, material, so_nr, client, object, task, amount, state, status) {
         this.t_nr = t_nr;
         this.material = material;

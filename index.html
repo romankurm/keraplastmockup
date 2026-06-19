@@ -84,12 +84,25 @@
     #finished-tasks-table {
         min-width: 0;
     }
+
+    .header-container {
+        display: flex;
+        gap: 300px;
+    }
 </style>
 
 <body>
 
-    <div class="logo-container">
-        <img src="keralogo.png" />
+    <div class="header-container">
+        <div class="logo-container">
+            <img src="keralogo.png" />
+        </div>
+        <div>
+            <p style="font-size: 30px;">J&auml;rjekord n&auml;dalates: <span id="queue-in-weeks">0</span></p>
+        </div>
+        <div>
+            <p style="font-size: 30px;">Luuke kokku: <span id="total-hatches-amount">0</span></p>
+        </div>
     </div>
 
     <div class="main-container">
@@ -139,5 +152,21 @@
     <script type="module" src="init.js"></script>
 
 </body>
+
+<script type="module">
+    import { getOrders } from "./data-helper.js";
+
+    let orders = await getOrders();
+
+    let totalAmount = 0;
+    for (let order of orders) {
+        totalAmount += order.getAmount();
+    }
+
+    let queueInWeeks = totalAmount / 55;
+
+    document.getElementById("queue-in-weeks").innerText = queueInWeeks.toFixed(1);
+    document.getElementById("total-hatches-amount").innerText = totalAmount;
+</script>
 
 </html>
