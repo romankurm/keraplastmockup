@@ -156,19 +156,26 @@
 <script type="module">
     import { getOrders } from "./data-helper.js";
 
-    // laptop test
+    await calculateData();
 
-    let orders = await getOrders();
+    const intervalID = setInterval(calculateData, 10000)
 
-    let totalAmount = 0;
-    for (let order of orders) {
-        totalAmount += order.getAmount();
+    async function calculateData() {
+
+        console.log("Calculating data...");
+
+        let orders = await getOrders();
+
+        let totalAmount = 0;
+        for (let order of orders) {
+            totalAmount += order.getAmount();
+        }
+
+        let queueInWeeks = totalAmount / 55;
+
+        document.getElementById("queue-in-weeks").innerText = queueInWeeks.toFixed(1);
+        document.getElementById("total-hatches-amount").innerText = totalAmount;
     }
-
-    let queueInWeeks = totalAmount / 55;
-
-    document.getElementById("queue-in-weeks").innerText = queueInWeeks.toFixed(1);
-    document.getElementById("total-hatches-amount").innerText = totalAmount;
 </script>
 
 </html>
