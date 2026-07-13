@@ -120,4 +120,16 @@ export class Order {
         this.comments = comments;
     }
 
+    containsComment(comment) {
+        if (this.getComments() != null) {
+                const properties = this.getComments().split(" ");
+
+                for (const property of properties) {
+                    if (property.toLowerCase() == comment) {
+                        return true;
+                    }
+                }
+            }
+    }
+
 };

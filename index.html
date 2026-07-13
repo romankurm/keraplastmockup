@@ -168,7 +168,8 @@
 
         let totalAmount = 0;
         for (let order of orders) {
-            totalAmount += order.getAmount();
+            if (!order.containsComment("valmis"))
+                totalAmount += order.getAmount();
         }
 
         let queueInWeeks = totalAmount / 55;
