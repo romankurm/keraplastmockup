@@ -23,11 +23,12 @@ export async function getOrders() {
         let client = order.clientName;
         let task = order.productSpec;
         let amount = order.productQuantity;
+        let comments = order.comments;
         let state = "";
         let status = "active";
         let completion_date = null;
 
-        let ordr = new Order(t_nr, material, so_nr, client, "",  task, Math.floor(amount), state, status, completion_date);
+        let ordr = new Order(t_nr, material, so_nr, client, "",  task, Math.floor(amount), state, status, completion_date, comments);
 
         orders.push(ordr);
     }

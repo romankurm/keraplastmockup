@@ -24,7 +24,6 @@ async function getSortedOrders() {
 }
 
 async function updateMainTable() {
-    console.log("Looking for updates...");
     const currentOrders = Order.currentOrders;
 
     const newOrders = await getSortedOrders();
@@ -35,8 +34,6 @@ async function updateMainTable() {
         for (let i = currentOrders.length; i < newOrders.length; ++i) {
 
             const newOrder = newOrders[i];
-            
-            console.log(`"Found a new order with T: ${newOrder.getT_nr()}`);
 
             Order.currentOrders.push(newOrder);
 
