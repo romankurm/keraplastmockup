@@ -34,6 +34,14 @@ export function setupTable(table_body, orders, isMainTable) {
 
 export function addRow(table_body, order, isMainTable) {
 
+            if (order.getStatus() != null) {
+                if (order.getStatus().toLowerCase() == "x")
+                    return;
+            }
+
+            if (order.containsComment("valmis") && isMainTable)
+                return;
+
             let table_row = document.createElement("tr");
     
             if (order.status == "active") {

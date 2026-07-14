@@ -68,6 +68,14 @@ export class Order {
         return this.status;
     }
 
+    isRemoved() {
+        if (this.getStatus() != null) {
+            if (this.getStatus().toLowerCase() == "x")
+                return true;
+        }
+        return false;
+    }
+
     getCompletionDate() {
         return this.completion_date;
     }
