@@ -6,7 +6,7 @@
 
     let sortedOrders = await getSortedOrders();
 
-    Order.currentOrders = sortedOrders;
+    Order.currentOrders = Array.from(sortedOrders);
 
     let table_body = document.getElementById("tableBody");
 
@@ -34,7 +34,7 @@ async function updateMainTable() {
         for (let i = currentOrders.length; i < newOrders.length; ++i) {
 
             const newOrder = newOrders[i];
-
+        
             Order.currentOrders.push(newOrder);
 
             addRow(table_body, newOrder, true);
