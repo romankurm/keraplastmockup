@@ -1,3 +1,5 @@
+import { Order } from "./Order.js";
+
 export function setupTable(table_body, orders, isMainTable) {
 
     const ordersCopy = Array.from(orders);
@@ -43,6 +45,7 @@ export function addRow(table_body, order, isMainTable) {
                 return;
 
             let table_row = document.createElement("tr");
+            table_row.id = `${order.getT_nr()}`;
     
             if (order.status == "active") {
                 table_row.classList.add("status-active");

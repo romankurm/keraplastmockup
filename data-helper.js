@@ -1,7 +1,7 @@
 import {Order} from "./Order.js"
 
 export async function getOrders() {
-    const url = "https://keraplast.prodcell.com/api/objects/Order";
+    const url = "https://keraplast.prodcell.com/api/objects/Order?limit=1000";
 
     let response = await fetch(url, {
         method: "GET",

@@ -18,13 +18,15 @@ async function getSortedOrders() {
     let ordrs = await getOrders();
 
     return ordrs
-        .filter(order => order.status != "done")
+        .filter(order => !order.isRemoved())
+        .filter(order => !order.containsComment("valmis"))
         .filter(order => order.so_nr != null)
         .filter(order => order.task != null);
 }
 
 async function updateMainTable() {
-    const currentOrders = Order.currentOrders;
+    console.log("Updating main table...");
+    const currentOrders = Order.currentOrders.filter((order) => !order.isRemoved() && !order.containsComment("valmis"));
 
     const newOrders = await getSortedOrders();
 
@@ -34,6 +36,8 @@ async function updateMainTable() {
         for (let i = currentOrders.length; i < newOrders.length; ++i) {
 
             const newOrder = newOrders[i];
+
+            console.log(`Found new order: ${newOrder.getT_nr()}`);
         
             Order.currentOrders.push(newOrder);
 
@@ -41,4 +45,9 @@ async function updateMainTable() {
 
         }
     }
+}
+
+async function removeJunk(order) {
+    if (order.isRemoved() || order.containsComment("valmis"))
+        document.getElementById(order.getT_nr()).remove();
 }

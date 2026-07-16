@@ -17,8 +17,10 @@ function getCompletedOrders(orders) {
     return orders.filter(order => {
         const order_comments = order.getComments();
 
+        if (order.isRemoved()) return false;
+
         if (order_comments != null) {
-            return order_comments.toLowerCase().includes("valmis");  
+            return (order_comments.toLowerCase().includes("valmis"));  
         } else {
             return false;
         }

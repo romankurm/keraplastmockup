@@ -175,7 +175,7 @@
                 }
             }
 
-            if (!order.containsComment("valmis"))
+            if (!order.containsComment("valmis") && !order.isRemoved())
                 totalAmount += order.getAmount();
         }
 
