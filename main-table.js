@@ -1,6 +1,4 @@
-    import { orders } from "./orders-data.js";
     import { setupTable } from "./table-helper.js";
-    import { addRow } from "./table-helper.js";
     import { getOrders } from "./data-helper.js"
     import { Order } from "./Order.js";
 
@@ -24,30 +22,22 @@ async function getSortedOrders() {
         .filter(order => order.task != null);
 }
 
+/**
+ * Rebuild the table from one fresh read.
+ *
+ * The previous version only appended rows when the order count grew, so an
+ * operation finished on an order already on screen never showed its tick mark,
+ * and a row that should have dropped out stayed. Redrawing the whole body is
+ * cheap at this row count and keeps every column, not just the tick marks,
+ * honest.
+ */
 async function updateMainTable() {
-    console.log("Updating main table...");
-    const currentOrders = Order.currentOrders.filter((order) => !order.isRemoved() && !order.containsComment("valmis"));
-
     const newOrders = await getSortedOrders();
 
-    let table_body = document.getElementById("tableBody");
+    Order.currentOrders = Array.from(newOrders);
 
-    if (currentOrders.length < newOrders.length) {
-        for (let i = currentOrders.length; i < newOrders.length; ++i) {
+    const table_body = document.getElementById("tableBody");
+    table_body.innerHTML = "";
 
-            const newOrder = newOrders[i];
-
-            console.log(`Found new order: ${newOrder.getT_nr()}`);
-        
-            Order.currentOrders.push(newOrder);
-
-            addRow(table_body, newOrder, true);
-
-        }
-    }
-}
-
-async function removeJunk(order) {
-    if (order.isRemoved() || order.containsComment("valmis"))
-        document.getElementById(order.getT_nr()).remove();
+    setupTable(table_body, newOrders, true);
 }
