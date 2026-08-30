@@ -1,20 +1,13 @@
     import { setupTable } from "./table-helper.js";
     import { getOrders } from "./data-helper.js"
     import { Order } from "./Order.js";
+    import { renderFinished } from "./finished-tasks-table.js";
 
-    let sortedOrders = await getSortedOrders();
+    await refreshBoard();
 
-    Order.currentOrders = Array.from(sortedOrders);
+    setInterval(() => { refreshBoard().catch(() => {}); }, 10000);
 
-    let table_body = document.getElementById("tableBody");
-
-    setupTable(table_body, sortedOrders, true);
-
-    const intervalID = setInterval(updateMainTable, 10000);
-
-async function getSortedOrders() {
-    let ordrs = await getOrders();
-
+function activeOrders(ordrs) {
     return ordrs
         .filter(order => !order.isRemoved())
         // All four operations finished: the row belongs in the finished
@@ -26,21 +19,23 @@ async function getSortedOrders() {
 }
 
 /**
- * Rebuild the table from one fresh read.
+ * Rebuild both tables from one read.
  *
- * The previous version only appended rows when the order count grew, so an
- * operation finished on an order already on screen never showed its tick mark,
- * and a row that should have dropped out stayed. Redrawing the whole body is
- * cheap at this row count and keeps every column, not just the tick marks,
- * honest.
+ * One read, so a finished order leaves the left table in the same pass as it
+ * appears on the right; separate reads let it show in both at once. The
+ * previous version also only appended rows when the order count grew and never
+ * touched an existing one, so an operation finished on an order already on
+ * screen changed nothing.
  */
-async function updateMainTable() {
-    const newOrders = await getSortedOrders();
+async function refreshBoard() {
+    const all = await getOrders();
+    const active = activeOrders(all);
 
-    Order.currentOrders = Array.from(newOrders);
+    Order.currentOrders = Array.from(active);
 
     const table_body = document.getElementById("tableBody");
     table_body.innerHTML = "";
+    setupTable(table_body, active, true);
 
-    setupTable(table_body, newOrders, true);
+    renderFinished(all);
 }

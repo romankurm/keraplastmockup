@@ -1,25 +1,18 @@
 import { setupTable } from "./table-helper.js";
-import { getOrders } from "./data-helper.js"
 
-const today = new Date().toISOString().split("T")[0];
-
-let orders = await getOrders();
-
-let completedOrders = getCompletedOrders(orders);
-
-//let completedToday = orders.filter(order => order.status == "done");
-
-let table_body = document.getElementById("finished-tasks-table");
-
-setupTable(table_body, completedOrders, false);
-
-setInterval(refreshFinishedTable, 10000);
-
-async function refreshFinishedTable() {
-    const fresh = getCompletedOrders(await getOrders());
+/**
+ * Draw the finished table from an order list the caller already has.
+ *
+ * It deliberately does not fetch: the row that leaves the left table has to
+ * arrive here in the same pass, and two independent reads would leave it in
+ * both tables, or in neither, until they caught up with each other.
+ */
+export function renderFinished(orders) {
     const body = document.getElementById("finished-tasks-table");
+    if (!body) return;
+
     body.innerHTML = "";
-    setupTable(body, fresh, false);
+    setupTable(body, getCompletedOrders(orders), false);
 }
 
 function getCompletedOrders(orders) {
@@ -35,4 +28,4 @@ function getCompletedOrders(orders) {
         return order_comments != null
             && order_comments.toLowerCase().includes("valmis");
     });
-}
+}
