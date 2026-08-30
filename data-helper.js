@@ -78,9 +78,20 @@ async function fetchDoneColumnsByOrder() {
                 `/tasks?limit=${PAGE_SIZE}&page=${page}&sortField=guid&sortOrder=ASC&operation=${encodeURIComponent(operationId)}`
             );
 
-            const rows = Array.isArray(json && json.data) ? json.data : [];
-            const reported = Number(json && json.total);
-            total = Number.isFinite(reported) ? reported : rows.length;
+            // A 200 carrying something that is not a task page is not a usable
+            // answer, and treating it as an empty one would publish a snapshot
+            // with every mark missing. Refusing it here sends the caller to the
+            // last state that did arrive.
+            if (!json || !Array.isArray(json.data)) {
+                throw new Error(`Operatsiooni ${operationId} vastuses ei ole taskide massiivi`);
+            }
+            const rows = json.data;
+
+            const reported = Number(json.total);
+            if (!Number.isFinite(reported)) {
+                throw new Error(`Operatsiooni ${operationId} vastuses ei ole kasutatavat total-i`);
+            }
+            total = reported;
 
             for (const task of rows) {
                 if (!task || !task.order) continue;
@@ -95,8 +106,11 @@ async function fetchDoneColumnsByOrder() {
             page++;
         }
 
+        // Short of the total means the page ceiling cut the read off. The rows
+        // that were missed would read as operations nobody has finished, so the
+        // snapshot is refused rather than shown with holes in it.
         if (fetched < total) {
-            console.warn(`Operatsiooni ${operationId} taske on rohkem kui ${MAX_PAGES} lehte, seis võib olla puudulik.`);
+            throw new Error(`Operatsioonist ${operationId} loeti ${fetched} taski ${total}-st, seis on puudulik`);
         }
     }
 
