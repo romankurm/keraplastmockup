@@ -91,22 +91,22 @@
         gap: 300px;
     }
 
+    /* Solid amber for an operation somebody is on, whether it is running or
+       paused: from across a workshop the useful distinction is finished,
+       started, not started. Sized and aligned to sit level with the tick. */
     .op-running,
     .op-paused {
         display: inline-block;
-        width: 18px;
-        height: 18px;
+        width: 20px;
+        height: 20px;
         border-radius: 50%;
+        background: #f59e0b;
         vertical-align: middle;
     }
 
-    .op-running {
-        background: #f59e0b;
-    }
-
-    .op-paused {
-        background: transparent;
-        border: 3px solid #f59e0b;
+    td i[data-lucide] svg,
+    td svg {
+        vertical-align: middle;
     }
 </style>
 
