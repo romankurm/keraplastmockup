@@ -32,6 +32,23 @@ const SNAPSHOT_TTL_MS = 5000;
 let doneSnapshot = { at: 0, value: new Map(), everLoaded: false };
 let doneInFlight = null;
 
+/**
+ * A row count from the API, or null when the value cannot be one.
+ *
+ * Not Number(): that reads null, false and "" as 0, so a response carrying any
+ * of them would look like a trustworthy empty page and would replace a good
+ * snapshot with one that has no tick marks at all.
+ */
+function parseRowCount(raw) {
+    if (typeof raw === "number") {
+        return Number.isInteger(raw) && raw >= 0 ? raw : null;
+    }
+    if (typeof raw === "string" && /^\d+$/.test(raw.trim())) {
+        return Number(raw.trim());
+    }
+    return null;
+}
+
 async function apiGet(path) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
@@ -87,9 +104,9 @@ async function fetchDoneColumnsByOrder() {
             }
             const rows = json.data;
 
-            const reported = Number(json.total);
-            if (!Number.isFinite(reported)) {
-                throw new Error(`Operatsiooni ${operationId} vastuses ei ole kasutatavat total-i`);
+            const reported = parseRowCount(json.total);
+            if (reported === null) {
+                throw new Error(`Operatsiooni ${operationId} vastuses ei ole kasutatavat total-i: ${JSON.stringify(json.total)}`);
             }
             total = reported;
 
@@ -102,6 +119,14 @@ async function fetchDoneColumnsByOrder() {
             }
 
             fetched += rows.length;
+
+            // More rows than the server says exist means the two numbers do not
+            // describe the same result, so neither can be trusted to say the
+            // read is complete.
+            if (fetched > total) {
+                throw new Error(`Operatsioon ${operationId} andis ${fetched} rida, total on ${total}`);
+            }
+
             if (!rows.length) break;
             page++;
         }
