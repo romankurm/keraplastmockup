@@ -17,15 +17,14 @@ export function renderFinished(orders) {
 
 function getCompletedOrders(orders) {
     return orders.filter(order => {
-        const order_comments = order.getComments();
-
         if (order.isRemoved()) return false;
 
         // Finished by the work itself, or marked finished by hand. The
         // comment rule stays so the existing manual override keeps working.
         if (order.allOperationsDone) return true;
 
-        return order_comments != null
-            && order_comments.toLowerCase().includes("valmis");
+        // Same test the left table uses to exclude a row. A substring here
+        // would put "poolvalmis" in both tables at once.
+        return Boolean(order.containsComment("valmis"));
     });
 }

@@ -3,6 +3,10 @@
     import { Order } from "./Order.js";
     import { renderFinished } from "./finished-tasks-table.js";
 
+    // Declared before the first await: two polls can overlap and a slow
+    // older answer must not repaint over a newer one.
+    let refreshSeq = 0;
+
     await refreshBoard();
 
     setInterval(() => { refreshBoard().catch(() => {}); }, 10000);
@@ -28,7 +32,10 @@ function activeOrders(ordrs) {
  * screen changed nothing.
  */
 async function refreshBoard() {
+    const seq = ++refreshSeq;
+
     const all = await getOrders();
+    if (seq !== refreshSeq) return;
     const active = activeOrders(all);
 
     Order.currentOrders = Array.from(active);
