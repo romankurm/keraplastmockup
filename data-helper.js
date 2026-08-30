@@ -82,7 +82,7 @@ async function apiGet(path) {
  * back off until it is finished again. Rows arrive in guid ASC order and Prodcell
  * guids are time ordered, so the last one seen wins.
  */
-async function fetchDoneColumnsByOrder() {
+async function fetchOperationStatusByOrder() {
     const currentStatus = new Map();
 
     for (const { column, operationId } of OPERATION_COLUMNS) {
@@ -139,19 +139,10 @@ async function fetchDoneColumnsByOrder() {
         }
     }
 
-    const done = new Map();
-    for (const [orderGuid, byColumn] of currentStatus) {
-        const columns = new Set();
-        for (const [column, status] of byColumn) {
-            if (DONE_STATUSES.includes(status)) columns.add(column);
-        }
-        if (columns.size) done.set(orderGuid, columns);
-    }
-
-    return done;
+    return currentStatus;
 }
 
-async function getDoneColumnsByOrder() {
+async function getOperationStatusByOrder() {
     if (Date.now() - doneSnapshot.at < SNAPSHOT_TTL_MS) {
         return doneSnapshot.value;
     }
@@ -161,7 +152,7 @@ async function getDoneColumnsByOrder() {
 
     doneInFlight = (async () => {
         try {
-            const value = await fetchDoneColumnsByOrder();
+            const value = await fetchOperationStatusByOrder();
             doneSnapshot = { at: Date.now(), value, everLoaded: true };
             return value;
         } finally {
@@ -180,9 +171,9 @@ export async function getOrders() {
     // A board on a wall must keep showing the work. If the operation scan fails
     // the last state we did get is reused rather than blanking every tick mark
     // over one bad request.
-    let doneByOrder = doneSnapshot.value;
+    let statusByOrder = doneSnapshot.value;
     try {
-        doneByOrder = await getDoneColumnsByOrder();
+        statusByOrder = await getOperationStatusByOrder();
     } catch (e) {
         console.warn("Operatsioonide seisu ei saadud:", e.message);
     }
@@ -198,14 +189,20 @@ export async function getOrders() {
         let amount = order.productQuantity;
         let comments = order.comments;
         // The renderer tests state.includes("l"|"n"|"p"|"k").
-        let doneColumns = doneByOrder.get(order.guid);
-        let state = doneColumns
-            ? OPERATION_COLUMNS.filter(o => doneColumns.has(o.column)).map(o => o.column).join("")
-            : "";
+        let byColumn = statusByOrder.get(order.guid);
+        let opStatus = {};
+        for (const { column } of OPERATION_COLUMNS) {
+            opStatus[column] = byColumn ? (byColumn.get(column) || null) : null;
+        }
+        let state = OPERATION_COLUMNS
+            .filter(o => DONE_STATUSES.includes(opStatus[o.column]))
+            .map(o => o.column).join("");
         let status = order.status;
         let completion_date = null;
 
         let ordr = new Order(t_nr, material, so_nr, client, "",  task, Math.floor(amount), state, status, completion_date, comments);
+
+        ordr.opStatus = opStatus;
 
         orders.push(ordr);
     }

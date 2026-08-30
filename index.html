@@ -90,6 +90,24 @@
         display: flex;
         gap: 300px;
     }
+
+    .op-running,
+    .op-paused {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        vertical-align: middle;
+    }
+
+    .op-running {
+        background: #f59e0b;
+    }
+
+    .op-paused {
+        background: transparent;
+        border: 3px solid #f59e0b;
+    }
 </style>
 
 <body>
@@ -121,7 +139,6 @@
                     <td>N</td>
                     <td>P</td>
                     <td>K</td>
-                    <td>Valmis</td>
                     <td>Puudused</td>
                 </tr>
             </thead>
@@ -186,4 +203,4 @@
     }
 </script>
 
-</html>
+</html>

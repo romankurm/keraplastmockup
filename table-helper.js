@@ -76,16 +76,18 @@ export function addRow(table_body, order, isMainTable) {
     
 
             if (isMainTable) {
-                for (const char of "lnpk") {
-                    let state_td = document.createElement("td");
-                    if (order.state.includes(char)) {
-                        /*
-                        let td_div_done = document.createElement("div");
-                        td_div_done.classList.add("td-done");
-                        state_td.appendChild(td_div_done);
-                        */
-                    state_td.innerHTML = '<i data-lucide="circle-check" color="green"></i>'
+                for (const column of ["l", "n", "p", "k"]) {
+                    const state_td = document.createElement("td");
+                    const status = order.opStatus ? order.opStatus[column] : null;
+
+                    if (status === "Y" || status === "Z") {
+                        state_td.innerHTML = '<i data-lucide="circle-check" color="green"></i>';
+                    } else if (status === "W") {
+                        state_td.innerHTML = '<span class="op-running" title="Töös"></span>';
+                    } else if (status === "P" || status === "R") {
+                        state_td.innerHTML = '<span class="op-paused" title="Peatatud"></span>';
                     }
+
                     table_row.appendChild(state_td);
                 }
             }
@@ -102,9 +104,9 @@ export function addRow(table_body, order, isMainTable) {
                 td_puudused.innerHTML = '<i data-lucide="circle-alert" color="red"></i>'
             }
 
-            table_row.appendChild(td_valmis);
+            if (!isMainTable) table_row.appendChild(td_valmis);
             table_row.appendChild(td_puudused);
     
             table_body.appendChild(table_row);
 
-}
+}
