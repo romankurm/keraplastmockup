@@ -17,6 +17,9 @@ async function getSortedOrders() {
 
     return ordrs
         .filter(order => !order.isRemoved())
+        // All four operations finished: the row belongs in the finished
+        // table on the right, not here.
+        .filter(order => !order.allOperationsDone)
         .filter(order => !order.containsComment("valmis"))
         .filter(order => order.so_nr != null)
         .filter(order => order.task != null);

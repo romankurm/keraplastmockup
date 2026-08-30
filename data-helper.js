@@ -204,6 +204,12 @@ export async function getOrders() {
 
         ordr.opStatus = opStatus;
 
+        // Every configured operation finished. False whenever the operation
+        // read failed, so a bad request can never make rows disappear.
+        ordr.allOperationsDone = OPERATION_COLUMNS.every(
+            o => DONE_STATUSES.includes(opStatus[o.column])
+        );
+
         orders.push(ordr);
     }
     return orders;
