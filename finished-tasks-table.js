@@ -1,4 +1,5 @@
 import { setupTable } from "./table-helper.js";
+import { isFinishedOrder } from "./data-helper.js";
 
 /**
  * Draw the finished table from an order list the caller already has.
@@ -8,9 +9,12 @@ import { setupTable } from "./table-helper.js";
  * both tables, or in neither, until they caught up with each other.
  */
 export function renderFinished(orders) {
-    const body = document.getElementById("finished-tasks-table");
-    if (!body) return;
+    // The id is on the <table>, so clearing that would take the column
+    // headers with it. Rows live in the tbody.
+    const table = document.getElementById("finished-tasks-table");
+    if (!table) return;
 
+    const body = table.tBodies[0] || table;
     body.innerHTML = "";
     setupTable(body, getCompletedOrders(orders), false);
 }
@@ -19,12 +23,6 @@ function getCompletedOrders(orders) {
     return orders.filter(order => {
         if (order.isRemoved()) return false;
 
-        // Finished by the work itself, or marked finished by hand. The
-        // comment rule stays so the existing manual override keeps working.
-        if (order.allOperationsDone) return true;
-
-        // Same test the left table uses to exclude a row. A substring here
-        // would put "poolvalmis" in both tables at once.
-        return Boolean(order.containsComment("valmis"));
+        return isFinishedOrder(order);
     });
 }

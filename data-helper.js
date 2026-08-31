@@ -163,6 +163,15 @@ async function getOperationStatusByOrder() {
     return await doneInFlight;
 }
 
+/**
+ * Finished as far as the boards are concerned: the work itself is done, or
+ * somebody said so by hand. Exported so the tables and the queue counters
+ * cannot drift apart on what counts as finished.
+ */
+export function isFinishedOrder(order) {
+    return Boolean(order.allOperationsDone) || Boolean(order.containsComment("valmis"));
+}
+
 export async function getOrders() {
     const responseJSON = await apiGet(`/objects/Order?limit=1000`);
 
