@@ -7,9 +7,12 @@
     // older answer must not repaint over a newer one.
     let refreshSeq = 0;
 
-    await refreshBoard();
-
+    // The interval is armed before the first read, so a screen that fails to
+    // load once still tries again instead of staying blank until somebody
+    // reloads the browser on the wall.
     setInterval(() => { refreshBoard().catch(() => {}); }, 10000);
+
+    await refreshBoard().catch(() => {});
 
 function activeOrders(ordrs) {
     return ordrs

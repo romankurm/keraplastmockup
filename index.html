@@ -178,9 +178,11 @@
     // older answer must not repaint over a newer one.
     let countSeq = 0;
 
-    await calculateData();
+    // Armed before the first count, so one failed read does not leave the
+    // screen without a counter until somebody reloads the browser.
+    setInterval(calculateData, 10000);
 
-    const intervalID = setInterval(calculateData, 10000)
+    await calculateData().catch(() => {});
 
     async function calculateData() {
 
