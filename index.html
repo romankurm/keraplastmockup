@@ -182,7 +182,7 @@
     // screen without a counter until somebody reloads the browser.
     setInterval(calculateData, 10000);
 
-    await calculateData().catch(() => {});
+    await calculateData().catch(err => console.error("queue counter failed", err));
 
     async function calculateData() {
 

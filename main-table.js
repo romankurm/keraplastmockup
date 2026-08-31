@@ -10,9 +10,9 @@
     // The interval is armed before the first read, so a screen that fails to
     // load once still tries again instead of staying blank until somebody
     // reloads the browser on the wall.
-    setInterval(() => { refreshBoard().catch(() => {}); }, 10000);
+    setInterval(() => { refreshBoard().catch(err => console.error("board refresh failed", err)); }, 10000);
 
-    await refreshBoard().catch(() => {});
+    await refreshBoard().catch(err => console.error("board refresh failed", err));
 
 function activeOrders(ordrs) {
     return ordrs
