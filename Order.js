@@ -18,7 +18,7 @@ export class Order {
 
     static currentOrders = [];
 
-    constructor(t_nr, material, so_nr, client, object, task, amount, state, status, completion_date, comments) {
+    constructor(t_nr, material, so_nr, client, object, task, amount, state, status, completion_date, comments, isOnHold, isUrgent) {
         this.t_nr = t_nr;
         this.material = material;
         this.so_nr = so_nr;
@@ -30,6 +30,20 @@ export class Order {
         this.status = status;
         this.comments = comments;
         this.completion_date = completion_date;
+        this._isOnHold = isOnHold;
+        this._isUrgent = isUrgent;
+    }
+
+    isWood() {
+        return this.material == "P";
+    }
+
+    isUrgent() {
+        return this._isUrgent;
+    }
+
+    isOnHold() {
+        return this._isOnHold;
     }
 
     getT_nr() {

@@ -8,107 +8,308 @@
 </head>
 
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+    :root {
+        --bg: #f5f7fa;
+        --surface: #ffffff;
+        --surface-alt: #f8fafc;
+        --urgent: #dcfce7;
+        --urgent-border: #86efac;
+        --hold: #fef9c3;
+        --hold-border: #fde047;
+        /* Wood order colors */
+        --wood: #a16207;
+        --wood-light: #fef3c7;
+        --wood-bg: #fffaf0;
+        --wood-border: #fde68a;
+        --border: #e2e8f0;
+        --text: #1e293b;
+        --text-muted: #64748b;
+        --primary: #4f8f7b;
+        --primary-light: #dff3eb;
+        --success: #22c55e;
+        --success-light: #dcfce7;
+        --warning: #f59e0b;
+        --warning-light: #fef3c7;
+        --danger: #ef4444;
+        --radius: 14px;
+        --shadow: 0 4px 18px rgba(15, 23, 42, 0.08);
+    }
+
+    /* ----------------------------- Base ----------------------------- */
+    * {
+        box-sizing: border-box;
+    }
 
     body {
-        background-color: #f3e9e0;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-        border-radius: 16px;
-        overflow: hidden;
-        background: white;
-        box-shadow: 0 10px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    }
-
-    thead tr {
-        background-color: #a8e6cf;
-    }
-
-    tr,
-    td {
+        margin: 0;
+        padding: 28px;
+        min-height: 100vh;
+        background: radial-gradient(circle at top left, rgba(168, 230, 207, 0.18), transparent 30%), var(--bg);
+        color: var(--text);
         font-family: 'Poppins', sans-serif;
-        font-size: 18px;
-        text-align: center;
-        padding: 10px;
-        color: black;
     }
 
-    tr:nth-child(even) {
-        background: whitesmoke;
-    }
-
-    img {
-        width: 100%;
+    /* ----------------------------- Header ----------------------------- */
+    .header-container {
+        display: flex;
+        align-items: center;
+        gap: 32px;
+        margin-bottom: 28px;
+        padding: 0 4px;
     }
 
     .logo-container {
-        max-width: 200px;
+        width: 180px;
+        max-width: 180px;
+        padding: 0;
+        flex-shrink: 0;
+    }
+
+    .logo-container img {
+        display: block;
         width: 100%;
-        padding-bottom: 20px;
+        height: auto;
+        object-fit: contain;
     }
 
-    .state-completed {
-        background-color: lightgreen;
+    .header-container>div:not(.logo-container) {
+        display: flex;
+        align-items: center;
+        min-height: 64px;
+        padding: 0 26px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
     }
 
-    h1 {
-        font-family: "Inter", system-ui, sans-serif;
-        color: crimson;
+    .header-container p {
+        margin: 0 !important;
+        font-size: 22px !important;
+        font-weight: 500;
+        color: var(--text);
+        white-space: nowrap;
     }
 
-    .td-done {
-        width: 100%;
-        height: 25px;
-        background-color: lightgreen;
-        border-radius: 14px;
+    .header-container span {
+        margin-left: 6px;
+        font-size: 26px;
+        font-weight: 700;
+        color: var(--primary);
     }
 
+    /* ----------------------------- Main layout ----------------------------- */
     .main-container {
         display: flex;
-        gap: 10px;
         align-items: flex-start;
-    }
-
-    #main-table {
-        flex: 1;
-    }
-
-    #finished-tasks-table {
-        flex: 1;
+        gap: 24px;
+        width: 100%;
     }
 
     #main-table,
     #finished-tasks-table {
+        flex: 1;
         min-width: 0;
     }
 
-    .header-container {
-        display: flex;
-        gap: 300px;
+    /* ----------------------------- Tables ----------------------------- */
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        overflow: hidden;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
     }
 
-    /* Solid amber for an operation somebody is on, whether it is running or
-       paused: from across a workshop the useful distinction is finished,
-       started, not started. Sized and aligned to sit level with the tick. */
+    /* ----------------------------- Table header ----------------------------- */
+    thead tr {
+        background: #eef7f3;
+    }
+
+    thead td {
+        padding: 15px 12px;
+        border-bottom: 1px solid var(--border);
+        color: #334155;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+    }
+
+    /* ----------------------------- Table cells ----------------------------- */
+    tr,
+    td {
+        font-family: 'Poppins', sans-serif;
+        font-size: 16px;
+        text-align: center;
+        padding: 12px;
+        color: var(--text);
+    }
+
+    tbody tr {
+        transition: background-color 0.15s ease, transform 0.15s ease;
+    }
+
+    tbody tr:nth-child(even) {
+        background: var(--surface-alt);
+    }
+
+    tbody tr:hover {
+        background: #f0f8f5;
+    }
+
+    /* Remove bottom border on final row */
+    tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* ----------------------------- Status / completed cells ----------------------------- */
+    .state-completed {
+        background-color: var(--success-light);
+        color: #15803d;
+        font-weight: 600;
+    }
+
+    .td-done {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 28px;
+        background: var(--success-light);
+        border: 1px solid #bbf7d0;
+        border-radius: 999px;
+        color: #15803d;
+        font-weight: 600;
+    }
+
+    /* ----------------------------- Running / paused operation ----------------------------- */
     .op-running,
     .op-paused {
         display: inline-block;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--warning);
+        vertical-align: middle;
+        box-shadow: 0 0 0 4px var(--warning-light), 0 2px 5px rgba(245, 158, 11, 0.25);
+    }
+
+    /* ----------------------------- Icons ----------------------------- */
+    td i[data-lucide] svg,
+    td svg {
         width: 20px;
         height: 20px;
-        border-radius: 50%;
-        background: #f59e0b;
         vertical-align: middle;
     }
 
-    td i[data-lucide] svg,
-    td svg {
-        vertical-align: middle;
+    /* ----------------------------- Heading ----------------------------- */
+    h1 {
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+        color: var(--text);
+        font-weight: 600;
+    }
+
+    /* ----------------------------- Responsive layout ----------------------------- */
+    @media (max-width: 1400px) {
+        body {
+            padding: 20px;
+        }
+
+        .header-container {
+            gap: 18px;
+        }
+
+        .header-container>div:not(.logo-container) {
+            padding: 0 18px;
+        }
+
+        .header-container p {
+            font-size: 18px !important;
+        }
+
+        .header-container span {
+            font-size: 22px;
+        }
+
+        .main-container {
+            gap: 16px;
+        }
+
+        tr,
+        td {
+            font-size: 14px;
+            padding: 9px;
+        }
+
+        thead td {
+            font-size: 12px;
+            padding: 12px 8px;
+        }
+    }
+
+    @media (max-width: 1000px) {
+        .header-container {
+            flex-wrap: wrap;
+        }
+
+        .main-container {
+            flex-direction: column;
+        }
+
+        #main-table,
+        #finished-tasks-table {
+            width: 100%;
+        }
+
+        .header-container>div:not(.logo-container) {
+            flex: 1;
+        }
+    }
+
+    /* =========================
+       ORDER STATES
+       ========================= */
+
+    .order-urgent {
+        background-color: var(--urgent) !important;
+        box-shadow: inset 4px 0 0 var(--urgent-border);
+    }
+
+    .order-on-hold {
+        background-color: var(--hold) !important;
+        box-shadow: inset 4px 0 0 var(--hold-border);
+    }
+
+    .order-urgent:hover {
+        background-color: #bbf7d0 !important;
+    }
+
+    .order-on-hold:hover {
+        background-color: #fef08a !important;
+    }
+
+
+    /* -----------------------------
+   Wood orders
+----------------------------- */
+
+    .wood-order {
+        background-color: var(--wood-bg) !important;
+        box-shadow: inset 4px 0 0 var(--wood);
+    }
+
+    .wood-order:hover {
+        background-color: #fff7e6 !important;
     }
 </style>
+
 
 <body>
 
@@ -214,4 +415,4 @@
     }
 </script>
 
-</html>
+</html>

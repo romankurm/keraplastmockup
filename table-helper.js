@@ -14,15 +14,19 @@ export function setupTable(table_body, orders, isMainTable) {
                 const properties = order_comments.split(" ");
 
                 for (const property of properties) {
-                    if (property.toLowerCase() == "p") {
-
-                        orders.splice(orders.indexOf(order), 1);
-                        orders.splice(0, 0, order);
-
-                    } else if (property.toLowerCase() == "valmis") {
+                    if (property.toLowerCase() == "valmis") {
                         orders.splice(orders.indexOf(order), 1);
                     }
                 }
+            }
+
+            if (order.isUrgent()) {
+                orders.splice(orders.indexOf(order), 1);
+                orders.splice(0, 0, order);
+            }
+            if (order.isOnHold()) {
+                orders.splice(orders.indexOf(order), 1);
+                orders.push(order);
             }
 
         }
@@ -53,6 +57,16 @@ export function addRow(table_body, order, isMainTable) {
                 table_row.classList.add("status-done");
             } else if (order.status == "problematic") {
                 table_row.classList.add("status-problematic");
+            }
+
+            if (order.isUrgent()) {
+                table_row.classList.add("order-urgent");
+            } else if (order.isOnHold()) {
+                table_row.classList.add("order-on-hold");
+            }
+
+            if (order.isWood()) {
+                table_row.classList.add("wood-order");
             }
     
             let c_o = !order.object
@@ -109,4 +123,4 @@ export function addRow(table_body, order, isMainTable) {
     
             table_body.appendChild(table_row);
 
-}
+}

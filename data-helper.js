@@ -197,6 +197,7 @@ export async function getOrders() {
         let task = order.productSpec;
         let amount = order.productQuantity;
         let comments = order.comments;
+        let isUrgent = order.isUrgent;
         // The renderer tests state.includes("l"|"n"|"p"|"k").
         let byColumn = statusByOrder.get(order.guid);
         let opStatus = {};
@@ -209,7 +210,9 @@ export async function getOrders() {
         let status = order.status;
         let completion_date = null;
 
-        let ordr = new Order(t_nr, material, so_nr, client, "",  task, Math.floor(amount), state, status, completion_date, comments);
+        let isOnHold = (status == "T" ? true : false);
+
+        let ordr = new Order(t_nr, material, so_nr, client, "",  task, Math.floor(amount), state, status, completion_date, comments, isOnHold, isUrgent);
 
         ordr.opStatus = opStatus;
 
