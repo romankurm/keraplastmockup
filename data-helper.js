@@ -49,19 +49,32 @@ function parseRowCount(raw) {
     return null;
 }
 
-async function apiGet(path) {
+async function apiGet(path, rqMethod = "GET", rqBody = JSON.stringify({})) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
     try {
-        const response = await fetch(`${API_BASE}${path}`, {
-            method: "GET",
-            headers: {
-                "X-API-KEY": API_KEY,
-                "Accept": "application/json"
-            },
-            signal: controller.signal
-        });
+        let response = null;
+        if (rqMethod == "GET") {
+            response = await fetch(`${API_BASE}${path}`, {
+                method: rqMethod,
+                headers: {
+                    "X-API-KEY": API_KEY,
+                    "Accept": "application/json"
+                },
+                signal: controller.signal
+            });
+        } else {
+            response = await fetch(`${API_BASE}${path}`, {
+                method: rqMethod,
+                headers: {
+                    "X-API-KEY": API_KEY,
+                    "Accept": "application/json"
+                },
+                signal: controller.signal,
+                body: rqBody
+            });
+        }
 
         if (!response.ok) {
             throw new Error(`GET ${path} failed: ${response.status}`);
@@ -190,6 +203,7 @@ export async function getOrders() {
     let orders = [];
 
     for (let order of data) {
+        let guid = order.guid;
         let t_nr = order.number;
         let material = order.material;
         let so_nr = order.invoiceNumber;
@@ -212,7 +226,7 @@ export async function getOrders() {
 
         let isOnHold = (status == "T" ? true : false);
 
-        let ordr = new Order(t_nr, material, so_nr, client, "",  task, Math.floor(amount), state, status, completion_date, comments, isOnHold, isUrgent);
+        let ordr = new Order(t_nr, material, so_nr, client, "",  task, Math.floor(amount), state, status, completion_date, comments, isOnHold, isUrgent, guid);
 
         ordr.opStatus = opStatus;
 
@@ -225,4 +239,27 @@ export async function getOrders() {
         orders.push(ordr);
     }
     return orders;
+}
+
+export async function insertOrderComment(order_guid, value) {
+    const currentComments = await getOrderComments(order_guid);
+
+    const newComments = currentComments
+        ? `${currentComments} ${value}`
+        : value;
+
+    const body = JSON.stringify({
+        comments: newComments
+    });
+
+    return await apiGet(
+        `/objects/Order/${order_guid}`,
+        "PUT",
+        body
+    );
+}
+
+export async function getOrderComments(order_guid) {
+    const responseJSON = await apiGet(`/objects/Order/${order_guid}`);
+    return responseJSON.comments;
 }

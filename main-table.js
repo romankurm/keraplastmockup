@@ -45,7 +45,7 @@ async function refreshBoard() {
 
     const table_body = document.getElementById("tableBody");
     table_body.innerHTML = "";
-    setupTable(table_body, active, true);
+    await setupTable(table_body, active, true);
 
-    renderFinished(all);
+    await renderFinished(all);
 }

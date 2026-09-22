@@ -16,7 +16,7 @@ export function renderFinished(orders) {
 
     const body = table.tBodies[0] || table;
     body.innerHTML = "";
-    setupTable(body, getCompletedOrders(orders), false);
+    setupTable(body, getCompletedOrders(orders).reverse(), false);
 }
 
 function getCompletedOrders(orders) {

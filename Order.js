@@ -18,7 +18,7 @@ export class Order {
 
     static currentOrders = [];
 
-    constructor(t_nr, material, so_nr, client, object, task, amount, state, status, completion_date, comments, isOnHold, isUrgent) {
+    constructor(t_nr, material, so_nr, client, object, task, amount, state, status, completion_date, comments, isOnHold, isUrgent, guid) {
         this.t_nr = t_nr;
         this.material = material;
         this.so_nr = so_nr;
@@ -32,6 +32,11 @@ export class Order {
         this.completion_date = completion_date;
         this._isOnHold = isOnHold;
         this._isUrgent = isUrgent;
+        this.guid = guid;
+    }
+
+    getGuid() {
+        return this.guid;
     }
 
     isWood() {

@@ -59,10 +59,14 @@ export function addRow(table_body, order, isMainTable) {
                 table_row.classList.add("status-problematic");
             }
 
-            if (order.isUrgent()) {
-                table_row.classList.add("order-urgent");
-            } else if (order.isOnHold()) {
-                table_row.classList.add("order-on-hold");
+            if (isMainTable) {
+
+                if (order.isUrgent()) {
+                    table_row.classList.add("order-urgent");
+                } else if (order.isOnHold()) {
+                    table_row.classList.add("order-on-hold");
+                }
+
             }
 
             if (order.isWood()) {
