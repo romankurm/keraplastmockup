@@ -189,15 +189,24 @@
     }
 
     /* ----------------------------- Running / paused operation ----------------------------- */
-    .op-running,
+    .op-running {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--success);
+        vertical-align: middle;
+        box-shadow: 0 0 0 4px var(--success-light), 0 2px 5px rgba(34, 197, 94, 0.3);
+    }
+
     .op-paused {
         display: inline-block;
         width: 18px;
         height: 18px;
         border-radius: 50%;
-        background: var(--warning);
+        background: var(--hold-border);
         vertical-align: middle;
-        box-shadow: 0 0 0 4px var(--warning-light), 0 2px 5px rgba(245, 158, 11, 0.25);
+        box-shadow: 0 0 0 4px var(--hold), 0 2px 5px rgba(253, 224, 71, 0.3);
     }
 
     /* ----------------------------- Icons ----------------------------- */
